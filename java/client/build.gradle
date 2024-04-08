@@ -11,7 +11,7 @@ dependencies {
 
 //    api project(":client-apis")
     api "org.apache.rocketmq:rocketmq-client-apis:5.0.6"
-    api("com.google.guava:guava:33.1.0-jre")
+    implementation("com.google.guava:guava:33.1.0-jre")
     implementation('org.apache.rocketmq:rocketmq-proto:2.0.3'){
         exclude(module:'grpc-netty-shaded')
     }
@@ -29,8 +29,8 @@ dependencies {
 //        exclude(module: "j2objc-annotations")
 //    }
 
-    implementation 'io.opentelemetry:opentelemetry-api:1.36.0'
-    api 'org.apache.commons:commons-lang3:3.14.0'
+//    implementation 'io.opentelemetry:opentelemetry-api:1.36.0'
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
     implementation 'net.javacrumbs.future-converter:future-converter-java8-guava:1.2.0'
 
     // native
