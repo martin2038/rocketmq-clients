@@ -70,6 +70,8 @@ final class Target_com_google_protobuf_UnsafeUtil {
 }
 
 /**
+ * RecomputeFieldValue.FieldOffset automatic substitution failed. com.google.protobuf.UnsafeUtil
+ *
  * https://github.com/quarkusio/quarkus/blob/main/extensions/netty/runtime/src/main/java/io/quarkus/netty/runtime/graal/NettySubstitutions.java
  */
 class RocketmqSubstitutions {
