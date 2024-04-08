@@ -9,7 +9,9 @@ dependencies {
 //    compileOnly "org.projectlombok:lombok:${lombokVersion}"
 //    compileOnly "com.fasterxml.jackson.core:jackson-annotations:2.16.1"
 
-    api project(":client-apis")
+//    api project(":client-apis")
+    api "org.apache.rocketmq:rocketmq-client-apis:5.0.6"
+    api("com.google.guava:guava:33.1.0-jre")
     implementation('org.apache.rocketmq:rocketmq-proto:2.0.3'){
         exclude(module:'grpc-netty-shaded')
     }
