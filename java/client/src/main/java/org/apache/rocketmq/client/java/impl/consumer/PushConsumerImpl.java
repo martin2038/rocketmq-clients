@@ -157,8 +157,9 @@ class PushConsumerImpl extends ConsumerImpl implements PushConsumer {
     protected void startUp() throws Exception {
         try {
             log.info("Begin to start the rocketmq push consumer, clientId={}", clientId);
-            GaugeObserver gaugeObserver = new ProcessQueueGaugeObserver(processQueueTable, clientId, consumerGroup);
-            this.clientMeterManager.setGaugeObserver(gaugeObserver);
+            log.warn("[ Disable ClientMeterManager ] for ProcessQueueGaugeObserver");
+            //GaugeObserver gaugeObserver = new ProcessQueueGaugeObserver(processQueueTable, clientId, consumerGroup);
+            //this.clientMeterManager.setGaugeObserver(gaugeObserver);
             super.startUp();
             final ScheduledExecutorService scheduler = this.getClientManager().getScheduler();
             this.consumeService = createConsumeService();

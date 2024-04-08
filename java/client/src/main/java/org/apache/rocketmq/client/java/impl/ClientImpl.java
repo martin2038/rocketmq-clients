@@ -59,6 +59,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -108,11 +109,11 @@ public abstract class ClientImpl extends AbstractIdleService implements Client, 
     // Thread-safe set.
     protected final Set<Endpoints> isolated;
     protected final ExecutorService clientCallbackExecutor;
-    protected final ClientMeterManager clientMeterManager;
-    /**
-     * Telemetry command executor, which aims to execute commands from the remote.
-     */
-    protected final ThreadPoolExecutor telemetryCommandExecutor;
+    //protected final ClientMeterManager clientMeterManager;
+    ///**
+    // * Telemetry command executor, which aims to execute commands from the remote.
+    // */
+    protected final ExecutorService telemetryCommandExecutor;
     protected final ClientId clientId;
 
     private final ClientManager clientManager;
@@ -127,7 +128,7 @@ public abstract class ClientImpl extends AbstractIdleService implements Client, 
     private final Map<Endpoints, ClientSessionImpl> sessionsTable;
     private final ReadWriteLock sessionsLock;
 
-    private final CompositedMessageInterceptor compositedMessageInterceptor;
+    //private final CompositedMessageInterceptor compositedMessageInterceptor;
 
     public ClientImpl(ClientConfiguration clientConfiguration, Set<String> topics) {
         this.clientConfiguration = checkNotNull(clientConfiguration, "clientConfiguration should not be null");
@@ -157,19 +158,20 @@ public abstract class ClientImpl extends AbstractIdleService implements Client, 
             new LinkedBlockingQueue<>(),
             new ThreadFactoryImpl("ClientCallbackWorker", clientIdIndex));
 
-        this.clientMeterManager = new ClientMeterManager(clientId, clientConfiguration);
-
-        this.compositedMessageInterceptor =
-            new CompositedMessageInterceptor(Collections.singletonList(new MessageMeterInterceptor(this,
-                clientMeterManager)));
-
-        this.telemetryCommandExecutor = new ThreadPoolExecutor(
-            1,
-            1,
-            60,
-            TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(),
-            new ThreadFactoryImpl("CommandExecutor", clientIdIndex));
+        //this.clientMeterManager = new ClientMeterManager(clientId, clientConfiguration);
+        //
+        //this.compositedMessageInterceptor =
+        //    new CompositedMessageInterceptor(Collections.singletonList(new MessageMeterInterceptor(this,
+        //        clientMeterManager)));
+        //
+        this.telemetryCommandExecutor = Executors.newVirtualThreadPerTaskExecutor();
+        //new ThreadPoolExecutor(
+        //    1,
+        //    1,
+        //    60,
+        //    TimeUnit.SECONDS,
+        //    new LinkedBlockingQueue<>(),
+        //    new ThreadFactoryImpl("CommandExecutor", clientIdIndex));
     }
 
 
@@ -225,28 +227,28 @@ public abstract class ClientImpl extends AbstractIdleService implements Client, 
         if (!ExecutorServices.awaitTerminated(clientCallbackExecutor)) {
             log.error("[Bug] Timeout to shutdown the client callback executor, clientId={}", clientId);
         }
-        clientMeterManager.shutdown();
-        log.info("Shutdown the rocketmq client successfully, clientId={}", clientId);
+        //clientMeterManager.shutdown();
+        //log.info("Shutdown the rocketmq client successfully, clientId={}", clientId);
     }
 
     @Override
     public void doBefore(MessageInterceptorContext context, List<GeneralMessage> generalMessages) {
-        try {
-            compositedMessageInterceptor.doBefore(context, generalMessages);
-        } catch (Throwable t) {
-            // Should never reach here.
-            log.error("[Bug] Exception raised while handling messages, clientId={}", clientId, t);
-        }
+        //try {
+        //    compositedMessageInterceptor.doBefore(context, generalMessages);
+        //} catch (Throwable t) {
+        //    // Should never reach here.
+        //    log.error("[Bug] Exception raised while handling messages, clientId={}", clientId, t);
+        //}
     }
 
     @Override
     public void doAfter(MessageInterceptorContext context, List<GeneralMessage> generalMessages) {
-        try {
-            compositedMessageInterceptor.doAfter(context, generalMessages);
-        } catch (Throwable t) {
-            // Should never reach here.
-            log.error("[Bug] Exception raised while handling messages, clientId={}", clientId, t);
-        }
+        //try {
+        //    compositedMessageInterceptor.doAfter(context, generalMessages);
+        //} catch (Throwable t) {
+        //    // Should never reach here.
+        //    log.error("[Bug] Exception raised while handling messages, clientId={}", clientId, t);
+        //}
     }
 
     @Override
@@ -316,9 +318,10 @@ public abstract class ClientImpl extends AbstractIdleService implements Client, 
      */
     @Override
     public final void onSettingsCommand(Endpoints endpoints, apache.rocketmq.v2.Settings settings) {
-        final Metric metric = new Metric(settings.getMetric());
-        clientMeterManager.reset(metric);
-        this.getSettings().sync(settings);
+        log.warn("clientMeterManager DISABLE !!! Not Support remote settings");
+        //final Metric metric = new Metric(settings.getMetric());
+        //clientMeterManager.reset(metric);
+        //this.getSettings().sync(settings);
     }
 
     /**
