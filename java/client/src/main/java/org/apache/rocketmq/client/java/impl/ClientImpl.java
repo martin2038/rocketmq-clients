@@ -158,6 +158,7 @@ public abstract class ClientImpl extends AbstractIdleService implements Client, 
             new LinkedBlockingQueue<>(),
             new ThreadFactoryImpl("ClientCallbackWorker", clientIdIndex));
 
+        log.warn("clientMeterManager DISABLE !!! ");
         //this.clientMeterManager = new ClientMeterManager(clientId, clientConfiguration);
         //
         //this.compositedMessageInterceptor =
@@ -318,10 +319,10 @@ public abstract class ClientImpl extends AbstractIdleService implements Client, 
      */
     @Override
     public final void onSettingsCommand(Endpoints endpoints, apache.rocketmq.v2.Settings settings) {
-        log.warn("clientMeterManager DISABLE !!! Not Support remote settings");
+        log.warn("clientMeterManager DISABLE !!! Ignore reset metric settings");
         //final Metric metric = new Metric(settings.getMetric());
         //clientMeterManager.reset(metric);
-        //this.getSettings().sync(settings);
+        this.getSettings().sync(settings);
     }
 
     /**

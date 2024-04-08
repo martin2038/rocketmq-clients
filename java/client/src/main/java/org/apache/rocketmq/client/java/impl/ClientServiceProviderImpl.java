@@ -17,6 +17,9 @@
 
 package org.apache.rocketmq.client.java.impl;
 
+import io.grpc.LoadBalancerRegistry;
+import io.grpc.ManagedChannelProvider;
+import io.grpc.NameResolverRegistry;
 import org.apache.rocketmq.client.apis.ClientServiceProvider;
 import org.apache.rocketmq.client.apis.consumer.PushConsumerBuilder;
 import org.apache.rocketmq.client.apis.consumer.SimpleConsumerBuilder;
@@ -28,6 +31,14 @@ import org.apache.rocketmq.client.java.impl.producer.ProducerBuilderImpl;
 import org.apache.rocketmq.client.java.message.MessageBuilderImpl;
 
 public class ClientServiceProviderImpl implements ClientServiceProvider {
+
+
+    static {
+        System.out.println("[ Rocketmq Client For GraalvmBuild ] ManagedChannelProvider : " + ManagedChannelProvider.provider());
+        System.out.println("[ Rocketmq Client For GraalvmBuild ] NameResolverRegistry   : " + NameResolverRegistry.getDefaultRegistry());
+        System.out.println("[ Rocketmq Client For GraalvmBuild ] LoadBalancerRegistry   : " + LoadBalancerRegistry.getDefaultRegistry());
+    }
+
     /**
      * @see ClientServiceProvider#newProducerBuilder()
      */
