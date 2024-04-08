@@ -1,0 +1,20 @@
+pluginManagement {
+    repositories {
+        maven{
+            url "$MAVEN_REPO"
+            credentials(HttpHeaderCredentials) {
+                name = "X-JFrog-Art-API"
+                value = System.getenv("JCR_TOKEN" )?:"$JCR_TOKEN"
+            }
+            authentication {
+                header(HttpHeaderAuthentication)
+            }
+        }
+        gradlePluginPortal()
+    }
+}
+
+include 'client'
+include 'client-apis'
+
+project(":client").name = "rocketmq-client-noshade"

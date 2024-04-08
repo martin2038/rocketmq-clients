@@ -47,7 +47,8 @@ public class MetadataUtils {
     }
 
     public static String getVersion() {
-        return METADATA_PROPERTIES.getProperty(VERSION_KEY);
+        return "5.0.6";
+        //return METADATA_PROPERTIES.getProperty(VERSION_KEY);
     }
 
     public static String getWrapperVersion() {
