@@ -22,9 +22,9 @@ final class Target_com_google_protobuf_Utf8 {
         System.out.println("[ Target_com_google_protobuf_Utf8 ]");
     }
     static {
-        System.out.println("[ Rocketmq Client For GraalvmBuild ] ManagedChannelProvider :: " + ManagedChannelProvider.provider());
-        System.out.println("[ Rocketmq Client For GraalvmBuild ] NameResolverRegistry   :: " + NameResolverRegistry.getDefaultRegistry());
-        System.out.println("[ Rocketmq Client For GraalvmBuild ] LoadBalancerRegistry   :: " + LoadBalancerRegistry.getDefaultRegistry());
+        System.out.println("[ Rocketmq Client For GraalvmBuild ] ManagedChannelProvider : " + ManagedChannelProvider.provider());
+        System.out.println("[ Rocketmq Client For GraalvmBuild ] NameResolverRegistry   : " + NameResolverRegistry.getDefaultRegistry());
+        System.out.println("[ Rocketmq Client For GraalvmBuild ] LoadBalancerRegistry   : " + LoadBalancerRegistry.getDefaultRegistry());
     }
 
     @Substitute
