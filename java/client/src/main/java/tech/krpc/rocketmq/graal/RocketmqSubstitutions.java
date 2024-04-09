@@ -5,20 +5,26 @@
 package tech.krpc.rocketmq.graal;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 import com.oracle.svm.core.annotate.Alias;
 import com.oracle.svm.core.annotate.RecomputeFieldValue;
 import com.oracle.svm.core.annotate.RecomputeFieldValue.Kind;
 import com.oracle.svm.core.annotate.Substitute;
 import com.oracle.svm.core.annotate.TargetClass;
-
+import io.grpc.LoadBalancerRegistry;
+import io.grpc.ManagedChannelProvider;
+import io.grpc.NameResolverRegistry;
 
 @TargetClass(className = "com.google.protobuf.Utf8")
 final class Target_com_google_protobuf_Utf8 {
 
     static {
         System.out.println("[ Target_com_google_protobuf_Utf8 ]");
+    }
+    static {
+        System.out.println("[ Rocketmq Client For GraalvmBuild ] ManagedChannelProvider :: " + ManagedChannelProvider.provider());
+        System.out.println("[ Rocketmq Client For GraalvmBuild ] NameResolverRegistry   :: " + NameResolverRegistry.getDefaultRegistry());
+        System.out.println("[ Rocketmq Client For GraalvmBuild ] LoadBalancerRegistry   :: " + LoadBalancerRegistry.getDefaultRegistry());
     }
 
     @Substitute
@@ -68,6 +74,7 @@ final class Target_com_google_protobuf_UnsafeUtil {
         return false;
     }
 }
+
 
 /**
  * RecomputeFieldValue.FieldOffset automatic substitution failed. com.google.protobuf.UnsafeUtil

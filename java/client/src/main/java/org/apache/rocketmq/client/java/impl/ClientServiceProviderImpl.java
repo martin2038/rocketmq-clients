@@ -33,11 +33,6 @@ import org.apache.rocketmq.client.java.message.MessageBuilderImpl;
 public class ClientServiceProviderImpl implements ClientServiceProvider {
 
 
-    static {
-        System.out.println("[ Rocketmq Client For GraalvmBuild ] ManagedChannelProvider : " + ManagedChannelProvider.provider());
-        System.out.println("[ Rocketmq Client For GraalvmBuild ] NameResolverRegistry   : " + NameResolverRegistry.getDefaultRegistry());
-        System.out.println("[ Rocketmq Client For GraalvmBuild ] LoadBalancerRegistry   : " + LoadBalancerRegistry.getDefaultRegistry());
-    }
 
     /**
      * @see ClientServiceProvider#newProducerBuilder()

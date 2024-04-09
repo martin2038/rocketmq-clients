@@ -17,7 +17,29 @@
 
 package org.apache.rocketmq.client.java.impl;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 import apache.rocketmq.v2.Code;
 import apache.rocketmq.v2.HeartbeatRequest;
@@ -45,46 +67,16 @@ import com.google.common.util.concurrent.SettableFuture;
 import com.google.errorprone.annotations.concurrent.GuardedBy;
 import io.grpc.Metadata;
 import io.grpc.stub.StreamObserver;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.stream.Collectors;
 import org.apache.rocketmq.client.apis.ClientConfiguration;
 import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.java.exception.InternalErrorException;
 import org.apache.rocketmq.client.java.exception.StatusChecker;
-import org.apache.rocketmq.client.java.hook.CompositedMessageInterceptor;
 import org.apache.rocketmq.client.java.hook.MessageInterceptor;
 import org.apache.rocketmq.client.java.hook.MessageInterceptorContext;
 import org.apache.rocketmq.client.java.impl.producer.ClientSessionHandler;
 import org.apache.rocketmq.client.java.message.GeneralMessage;
-import org.apache.rocketmq.client.java.metrics.ClientMeterManager;
-import org.apache.rocketmq.client.java.metrics.MessageMeterInterceptor;
-import org.apache.rocketmq.client.java.metrics.Metric;
 import org.apache.rocketmq.client.java.misc.ClientId;
 import org.apache.rocketmq.client.java.misc.ExecutorServices;
-import org.apache.rocketmq.client.java.misc.ThreadFactoryImpl;
 import org.apache.rocketmq.client.java.misc.Utilities;
 import org.apache.rocketmq.client.java.route.Endpoints;
 import org.apache.rocketmq.client.java.route.TopicRouteData;
@@ -92,6 +84,8 @@ import org.apache.rocketmq.client.java.rpc.RpcFuture;
 import org.apache.rocketmq.client.java.rpc.Signature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 @SuppressWarnings({"UnstableApiUsage", "NullableProblems"})
 public abstract class ClientImpl extends AbstractIdleService implements Client, ClientSessionHandler,
@@ -150,22 +144,28 @@ public abstract class ClientImpl extends AbstractIdleService implements Client, 
         this.clientManager = new ClientManagerImpl(this);
 
         final long clientIdIndex = clientId.getIndex();
-        this.clientCallbackExecutor = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors(),
-            Runtime.getRuntime().availableProcessors(),
-            60,
-            TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(),
-            new ThreadFactoryImpl("ClientCallbackWorker", clientIdIndex));
+        this.clientCallbackExecutor = Executors.newThreadPerTaskExecutor(
+                Thread.ofVirtual().name("clientCallbackVirtual" + clientIdIndex).factory()
+        );
+        //new ThreadPoolExecutor(
+        //    Runtime.getRuntime().availableProcessors(),
+        //    Runtime.getRuntime().availableProcessors(),
+        //    60,
+        //    TimeUnit.SECONDS,
+        //    new LinkedBlockingQueue<>(),
+        //    new ThreadFactoryImpl("ClientCallbackWorker", clientIdIndex));
 
-        log.warn("clientMeterManager DISABLE !!! ");
+        log.warn("clientMeterManager of clientIdIndex : {}  DISABLED !!! ",clientIdIndex);
         //this.clientMeterManager = new ClientMeterManager(clientId, clientConfiguration);
         //
         //this.compositedMessageInterceptor =
         //    new CompositedMessageInterceptor(Collections.singletonList(new MessageMeterInterceptor(this,
         //        clientMeterManager)));
         //
-        this.telemetryCommandExecutor = Executors.newVirtualThreadPerTaskExecutor();
+        this.telemetryCommandExecutor =
+                Executors.newThreadPerTaskExecutor(
+                        Thread.ofVirtual().name("telemetryCommandVirtual" + clientIdIndex).factory()
+                );
         //new ThreadPoolExecutor(
         //    1,
         //    1,
@@ -319,7 +319,7 @@ public abstract class ClientImpl extends AbstractIdleService implements Client, 
      */
     @Override
     public final void onSettingsCommand(Endpoints endpoints, apache.rocketmq.v2.Settings settings) {
-        log.warn("clientMeterManager DISABLE !!! Ignore reset metric settings");
+        log.info("clientMeterManager DISABLED !!! Ignore reset metric settings");
         //final Metric metric = new Metric(settings.getMetric());
         //clientMeterManager.reset(metric);
         this.getSettings().sync(settings);

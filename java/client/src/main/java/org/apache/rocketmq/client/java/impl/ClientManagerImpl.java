@@ -49,6 +49,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -113,17 +114,21 @@ public class ClientManagerImpl extends ClientManager {
         this.rpcClientTable = new HashMap<>();
         this.rpcClientTableLock = new ReentrantReadWriteLock();
         final long clientIndex = client.getClientId().getIndex();
-        this.scheduler = new ScheduledThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors(),
-            new ThreadFactoryImpl("ClientScheduler", clientIndex));
+        this.scheduler = Executors.newSingleThreadScheduledExecutor(
+                Thread.ofVirtual().name("ClientSchedulerVirtual" + clientIndex).factory()
+        );
+    //new ScheduledThreadPoolExecutor(
+    //        Runtime.getRuntime().availableProcessors(),
+    //        new ThreadFactoryImpl("ClientScheduler", clientIndex));
 
-        this.asyncWorker = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors(),
-            Runtime.getRuntime().availableProcessors(),
-            60,
-            TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(),
-            new ThreadFactoryImpl("ClientAsyncWorker", clientIndex));
+        this.asyncWorker = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("ClientAsyncWorkerVirtual" + clientIndex).factory());
+            //    new ThreadPoolExecutor(
+            //Runtime.getRuntime().availableProcessors(),
+            //Runtime.getRuntime().availableProcessors(),
+            //60,
+            //TimeUnit.SECONDS,
+            //new LinkedBlockingQueue<>(),
+            //new ThreadFactoryImpl("ClientAsyncWorker", clientIndex));
     }
 
     /**
