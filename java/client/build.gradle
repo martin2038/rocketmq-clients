@@ -11,14 +11,16 @@ dependencies {
 
 //    api project(":client-apis")
     api "org.apache.rocketmq:rocketmq-client-apis:5.0.6"
-    implementation("com.google.guava:guava:33.1.0-jre")
+    // override guava from rocketmq-client-apis
+    api("com.google.guava:guava:33.1.0-jre")
+    implementation "org.slf4j:slf4j-api:1.7.36"
+
     implementation('org.apache.rocketmq:rocketmq-proto:2.0.3'){
         exclude(module:'grpc-netty-shaded')
     }
     implementation "io.netty:netty-handler:$nettyGrpcVersion"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
     implementation "io.grpc:grpc-netty:${grpcVersion}"
-    implementation "org.slf4j:slf4j-api:1.7.36"
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation 'com.google.protobuf:protobuf-java:3.25.3'
 //    implementation 'com.google.protobuf:protobuf-javalite:3.25.3'
