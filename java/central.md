@@ -2,6 +2,13 @@
 
 ## 上传指南
 
+
+https://central.sonatype.org/register/central-portal/
+
+`From March 12th, 2024, all registration will be via the Central Portal.`
+从2024-03-12开始，只能通过`Central Portal`注册了，发布还是兼容老的`OSSRH`
+
+
 依赖内容
 https://central.sonatype.org/publish/requirements/
 
