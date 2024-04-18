@@ -1,6 +1,71 @@
 
 //version = '1.4.0301'
 
+buildscript {
+//    repositories {
+//        mavenCentral()
+//    }
+    //So when you want to use a library in the build script itself, you must add this library on the script classpath using buildScript:
+    //https://docs.gradle.org/current/userguide/plugins.html#sec:applying_plugins_buildscript
+    dependencies {
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.28.0'
+    }
+}
+
+plugins {
+    id "com.vanniktech.maven.publish" version "0.28.0" //apply false
+}
+
+
+import com.vanniktech.maven.publish.SonatypeHost
+//
+////https://vanniktech.github.io/gradle-maven-publish-plugin/central/#secrets
+//// Automatic release: publishAndReleaseToMavenCentral --no-configuration-cache
+//// Manual release:  publishToMavenCentral --no-configuration-cache
+mavenPublishing {
+//    publishToMavenCentral(SonatypeHost.DEFAULT)
+//    // or when publishing to https://s01.oss.sonatype.org
+//    publishToMavenCentral(SonatypeHost.S01)
+//    // or when publishing to https://central.sonatype.com/
+    // 不自动发布，先发布到
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL,false)
+
+    signAllPublications()
+
+//    coordinates("com.example.mylibrary", "library-name", "1.0.3-SNAPSHOT")
+
+
+    pom {
+        name = "rocketmq-client-aot-graalvm"
+        description = "A rocketmq client 5.0 with GraalVM Native Image Support (AOT) ."
+        inceptionYear = "2024"
+        url = "https://github.com/martin2038/rocketmq-clients"
+        licenses {
+            license {
+                name = "The Apache License, Version 2.0"
+                url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            }
+        }
+        developers {
+            developer {
+                id = "martin2038"
+                name = "Martin Cong"
+                url = "https://github.com/martin2038/"
+                email = "cyy2cyy@gmail.com"
+            }
+        }
+        scm {
+            url = "https://github.com/martin2038/rocketmq-clients"
+            connection = "scm:git:git://github.com/martin2038/rocketmq-clients.git"
+            developerConnection = "scm:git:ssh://github.com/martin2038/rocketmq-clients.git"
+        }
+    }
+}
+
+
+
+//apply from: "$rootProject.projectDir/central.gradle"
 
 dependencies {
 //    api "com.bt.rpc:rpc-api:$rpcVersion"

@@ -17,4 +17,4 @@ pluginManagement {
 include 'client'
 //include 'client-apis'
 
-project(":client").name = "rocketmq-client-noshade"
+project(":client").name = "rocketmq-client-aot-graalvm"

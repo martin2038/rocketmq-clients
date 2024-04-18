@@ -30,9 +30,9 @@ allprojects {
 
 subprojects {
     apply plugin: 'java-library'
-    apply plugin: 'org.kordamp.gradle.jandex'
+//    apply plugin: 'org.kordamp.gradle.jandex'
 
-    apply from: "$rootProject.projectDir/upload.gradle"
+
 
     group = "$group"
     version = "$version"
@@ -45,9 +45,9 @@ subprojects {
         options.compilerArgs << '-parameters'
     }
 
-    compileTestJava {
-        dependsOn 'jandex'
-    }
+//    compileTestJava {
+//        dependsOn 'jandex'
+//    }
 
     dependencies {
 //        api "com.bt.rpc:rpc-api:$rpcVersion"
