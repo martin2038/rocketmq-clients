@@ -80,6 +80,15 @@ gpg --keyring secring.gpg --export-secret-keys > ~/.gnupg/martin2038-secring.gpg
 
 ## 发布
 
+### com.vanniktech.maven.publish 插件
+
+https://vanniktech.github.io/gradle-maven-publish-plugin/#advantages-over-maven-publish
+
+* 支持多项目
+* 支持Maven central
+* 支持In memory GPG signing， `CI`友好
+
+
 
 https://central.sonatype.com/publishing/deployments
 
