@@ -28,13 +28,13 @@ https://central.sonatype.com/artifact/tech.krpc/rocketmq-client-aot-graalvm
 <dependency>
     <groupId>tech.krpc</groupId>
     <artifactId>rocketmq-client-aot-graalvm</artifactId>
-    <version>5.0.0-beta</version>
+    <version>5.0.0.rc1</version>
 </dependency>
 ```
 
 ```kotlin
 //  Gradle
-implementation("tech.krpc:rocketmq-client-aot-graalvm:5.0.0-beta")
+implementation("tech.krpc:rocketmq-client-aot-graalvm:5.0.0.rc1")
 ```
 
 ### AOT 编译
@@ -55,3 +55,9 @@ https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/B
 [1/8] Initializing...                               
 ```
 在`[1/8] Initializing`之前会打印上述信息。
+
+
+
+### 发布
+
+[central.md](central.md)
